@@ -18,6 +18,7 @@ class ImageEngine :
         }
         return metadata
     def saveImage(self, output_path : str, arr : np.ndarray = None) : 
-        pass
-o = ImageEngine('assets/sample.jpg')
-print(o.getMetaData())
+        if arr is None : 
+            plt.imsave(output_path, self.imgArray)
+        else : 
+            plt.imsave(output_path, arr)
