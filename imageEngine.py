@@ -46,3 +46,15 @@ class ImageEngine :
         else : 
             raise ValueError(f"Invalid channel '{input}'. Allowed values are 'R', 'G', 'B'.")
         return tempArr
+    def flip(self, direction : str) -> np.ndarray : 
+        temp = None
+        if not isinstance(direction, str) : 
+            raise TypeError("Only Strings Allowed !")
+        elif(direction.capitalize() == 'Horizontal') :
+            temp = self.imgArray[:, ::-1, :]
+        elif(direction.capitalize() == 'Vertical') : 
+            temp = self.imgArray[::-1, :, :]
+            pass
+        else : 
+            raise ValueError(f"Invalid Input '{direction}. Allowed Values Are : 'Horizontal', 'Vertical'")
+        return temp
