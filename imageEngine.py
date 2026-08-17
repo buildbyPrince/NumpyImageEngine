@@ -30,3 +30,19 @@ class ImageEngine :
         blue = self.imgArray[:, :, 2]
         luminance = (0.299 * red) + (0.587 * green) + (0.114 * blue)
         return luminance.astype(np.uint8)
+    def extractChannel(self, input : str) -> np.ndarray :
+        tempArr = self.imgArray.copy()
+        if not isinstance(input, str) : 
+            raise TypeError("Only Strings Allowed")
+        elif (input == "R") :
+            tempArr[:, :, 1] = 0
+            tempArr[:, :, 2] = 0
+        elif (input == "B") : 
+            tempArr[:, :, 0] = 0
+            tempArr[:, :, 1] = 0
+        elif (input == "G") : 
+            tempArr[:, :, 0] = 0
+            tempArr[:, :, 2] = 0
+        else : 
+            raise ValueError(f"Invalid channel '{input}'. Allowed values are 'R', 'G', 'B'.")
+        return tempArr
