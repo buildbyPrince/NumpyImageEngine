@@ -54,7 +54,17 @@ class ImageEngine :
             temp = self.imgArray[:, ::-1, :]
         elif(direction.capitalize() == 'Vertical') : 
             temp = self.imgArray[::-1, :, :]
-            pass
         else : 
             raise ValueError(f"Invalid Input '{direction}. Allowed Values Are : 'Horizontal', 'Vertical'")
         return temp
+    def rotate90(self, direction : str) -> np.ndarray :
+        if not isinstance(direction, str) : 
+            raise TypeError("Only Strings Allowed !")
+        elif(direction.lower() == 'clockwise') :
+            temp = self.imgArray.swapaxes(0, 1)
+            return temp[::, ::-1]
+        elif(direction.lower() == 'counterclockwise') :
+            temp = self.imgArray.swapaxes(0, 1)
+            return temp[::-1, ::]
+        else : 
+            raise ValueError(f"Invalid Input '{direction}. Allowed Values Are : 'Clockwise''Counterclockwise'")
