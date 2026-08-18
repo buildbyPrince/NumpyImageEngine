@@ -24,16 +24,34 @@ class ImageEngine :
             plt.imsave(output_path, arr, cmap='gray')
         else : 
             plt.imsave(output_path, arr)
-    def to_grayScale(self) -> np.ndarray : 
-        red = self.imgArray[:, :, 0]
-        green = self.imgArray[:, :, 1]
-        blue = self.imgArray[:, :, 2]
-        luminance = (0.299 * red) + (0.587 * green) + (0.114 * blue)
-        return luminance.astype(np.uint8)
+    def to_grayScale(self) -> np.ndarray :
+        # improvement code 
+        weights = np.array([0.299, 0.587, 0.114], dtype=np.float32)
+        return np.dot(self.imgArray[..., :3], weights).astype(np.uint8)
+        # red = self.imgArray[:, :, 0]
+        # green = self.imgArray[:, :, 1]
+        # blue = self.imgArray[:, :, 2]
+        # luminance = (0.299 * red) + (0.587 * green) + (0.114 * blue)
+        # return luminance.astype(np.uint8)
     def extractChannel(self, input : str) -> np.ndarray :
-        tempArr = self.imgArray.copy()
         if not isinstance(input, str) : 
             raise TypeError("Only Strings Allowed")
+        # improvement code
+        channel = input.upper()
+        channel_map = {'R': [1, 2], 'G': [0, 2], 'B': [0, 1]}
+        
+        if channel not in channel_map:
+            raise ValueError(f"Invalid channel '{input}'. Allowed values are 'R', 'G', 'B'.")
+        
+        # RGBA-safe slicing: sirf pehle 3 channels copy karo
+        tempArr = self.imgArray[..., :3].copy()
+        
+        # Zero out other two channels
+        for idx in channel_map[channel]:
+            tempArr[:, :, idx] = 0
+            
+        return tempArr
+        """
         elif (input == "R") :
             tempArr[:, :, 1] = 0
             tempArr[:, :, 2] = 0
@@ -46,6 +64,7 @@ class ImageEngine :
         else : 
             raise ValueError(f"Invalid channel '{input}'. Allowed values are 'R', 'G', 'B'.")
         return tempArr
+        """
     def flip(self, direction : str) -> np.ndarray : 
         temp = None
         if not isinstance(direction, str) : 
@@ -75,7 +94,9 @@ class ImageEngine :
             raise ValueError("Invalid Contrast (0 to 3.0) or Brightness (-255 to 255) range.")
         else :
             temp = self.imgArray.astype(np.float32)
-            temp[::, ::, ::] *= contrast
-            temp[::, ::, ::] += brightness
+            # Improvement code : 
+            temp = temp * contrast + brightness
+            # temp[::, ::, ::] *= contrast
+            # temp[::, ::, ::] += brightness
             result = np.clip(temp, 0, 255)
             return result.astype(np.uint8)
