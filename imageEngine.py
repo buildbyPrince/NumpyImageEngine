@@ -68,3 +68,14 @@ class ImageEngine :
             return temp[::-1, ::]
         else : 
             raise ValueError(f"Invalid Input '{direction}. Allowed Values Are : 'Clockwise''Counterclockwise'")
+    def adjBriCT(self, brightness : float, contrast : float = 1) -> np.ndarray : 
+        if not isinstance(brightness, (int, float)) or not isinstance(contrast, (int, float)):
+            raise TypeError("Both must be int or float")
+        elif((brightness>255 or brightness<-255) or (contrast>3.0 or contrast<0)) : 
+            raise ValueError("Invalid Contrast (0 to 3.0) or Brightness (-255 to 255) range.")
+        else :
+            temp = self.imgArray.astype(np.float32)
+            temp[::, ::, ::] *= contrast
+            temp[::, ::, ::] += brightness
+            result = np.clip(temp, 0, 255)
+            return result.astype(np.uint8)
